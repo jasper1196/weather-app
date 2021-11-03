@@ -6,12 +6,10 @@ import './App.css';
 import axios from "axios";
 import ForecastTab from "./pages/forecastTab/ForecastTab";
 import { convertTemps } from "./Tools";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import TodayTab from "./pages/todayTab/TodayTab";
 
 const apiKey = "84a305756a182da534022ef48cf11953";
-
-
-
-
 
 function App() {
   const [weatherData, setWeatherData] = useState({});
@@ -71,11 +69,29 @@ function App() {
 
         {/*CONTENT ------------------ */}
         <div className="weather-content">
-          <TabBarMenu/>
 
-          <div className="tab-wrapper">
-            <ForecastTab coordinates={weatherData.coord} apiKey={apiKey} />
-          </div>
+          <Router>
+
+            <TabBarMenu/>
+
+            <div className="tab-wrapper">
+
+              <Switch>
+
+                <Route path="/komende-week">
+                  <ForecastTab coordinates={weatherData.coord} apiKey={apiKey} />
+                </Route>
+
+                <Route path="/" exact>
+                  <TodayTab coordinates={weatherData.coord} apiKey={apiKey} />
+                </Route>
+
+              </Switch>
+
+            </div>
+
+          </Router>
+
         </div>
 
         <MetricSlider/>

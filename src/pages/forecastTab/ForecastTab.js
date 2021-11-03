@@ -5,10 +5,12 @@ import { convertDt, convertTemps } from "../../Tools";
 
 function ForecastTab( { coordinates, apiKey } ) {
     const [forecasts, setForecasts] = useState([]);
+    const [loading, toggleLoading] = useState(false);
 
     useEffect(() => {
 
         async function fetchData() {
+            toggleLoading(true);
             try {
                 const result = await axios.get(`https://api.openweathermap.org/data/2.5/onecall?lat=${coordinates.lat}&lon=${coordinates.lon}&exclude=minutely,current,hourly&appid=${apiKey}`);
                 console.log(result.data);
@@ -16,6 +18,7 @@ function ForecastTab( { coordinates, apiKey } ) {
             } catch (e) {
                 console.log(e);
             }
+            toggleLoading(false);
         }
 
         if(coordinates) {
@@ -26,7 +29,7 @@ function ForecastTab( { coordinates, apiKey } ) {
 
     return (
         <div className="tab-wrapper">
-
+            {loading && <span>Loading...</span>}
             {forecasts.map((day) => {
                 return (
                     <article className="forecast-day" key={day.dt}>
