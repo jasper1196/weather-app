@@ -1,13 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import SearchBar from './components/searchBar/SearchBar';
 import TabBarMenu from './components/tabBarMenu/TabBarMenu';
 import MetricSlider from './components/metricSlider/MetricSlider';
 import './App.css';
 import axios from "axios";
 import ForecastTab from "./pages/forecastTab/ForecastTab";
-import { convertTemps } from "./Tools";
+import { convertToCelsius } from "./helpers/Tools";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import TodayTab from "./pages/todayTab/TodayTab";
+import { TempContext } from "./context/TempProvider";
 
 const apiKey = "84a305756a182da534022ef48cf11953";
 
@@ -15,13 +16,14 @@ function App() {
   const [weatherData, setWeatherData] = useState({});
   const [location, setLocation] = useState("");
   const [error, toggleError] = useState(false);
+  const { kelvinToMetric } = useContext(TempContext);
 
   useEffect(() => {
 
     async function fetchData() {
       toggleError(false);
       try {
-        const results = await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${location}&appid=${apiKey}`)
+        const results = await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${location}&appid=${process.env.REACT_APP_API_KEY}`)
         console.log(results.data);
         setWeatherData(results.data);
       } catch (e) {
@@ -61,7 +63,7 @@ function App() {
                 <>
                   <h2>{weatherData.weather[0].description}</h2>
                   <h3>{weatherData.name}</h3>
-                  <h1>{convertTemps(weatherData.main.temp)}&deg;</h1>
+                  <h1>{kelvinToMetric(weatherData.main.temp)}</h1>
                 </>
             }
             </span>
@@ -79,11 +81,11 @@ function App() {
               <Switch>
 
                 <Route path="/komende-week">
-                  <ForecastTab coordinates={weatherData.coord} apiKey={apiKey} />
+                  <ForecastTab coordinates={weatherData.coord} />
                 </Route>
 
                 <Route path="/" exact>
-                  <TodayTab coordinates={weatherData.coord} apiKey={apiKey} />
+                  <TodayTab coordinates={weatherData.coord} />
                 </Route>
 
               </Switch>

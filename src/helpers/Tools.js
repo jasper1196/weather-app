@@ -1,6 +1,11 @@
-export function convertTemps(temp) {
+export function convertToCelsius(temp) {
     const celsius = temp - 273.15;
-    return celsius.toFixed(0);
+    return `${celsius.toFixed(0)} °C`;
+}
+
+export function convertToFahrenheit(temp) {
+    const fahrenheit = (temp - 273.15) * 1.8 + 32;
+    return `${fahrenheit.toFixed(0)} °F`;
 }
 
 export function convertDt(timestamp) {
